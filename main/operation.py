@@ -1,4 +1,4 @@
-import ast
+import math
 
 class Operation:
     def __init__(self):
@@ -173,8 +173,8 @@ class Operation:
                 if tokens[-2] in self.variables:
                     tokens[-2] = self.variables[tokens[-2]]
                 numChecker = self.numberChecker(tokens)
-                if numChecker[0]:
-                    return tokens[-1] + tokens[-2]
+                if numChecker:
+                    return tokens[-2] + tokens[-1]
             else:
                 self.error('cmdErr')
 
@@ -189,8 +189,8 @@ class Operation:
                 if tokens[-2] in self.variables:
                     tokens[-2] = self.variables[tokens[-2]]
                 numChecker = self.numberChecker(tokens)
-                if numChecker[0]:
-                    return tokens[-1] - tokens[-2]
+                if numChecker:
+                    return tokens[-2] - tokens[-1]
             else:
                 self.error('cmdErr')
 
@@ -205,8 +205,8 @@ class Operation:
                 if tokens[-2] in self.variables:
                     tokens[-2] = self.variables[tokens[-2]]
                 numChecker = self.numberChecker(tokens)
-                if numChecker[0]:
-                    return tokens[-1] * tokens[-2]
+                if numChecker:
+                    return tokens[-2] * tokens[-1]
             else:
                 self.error('cmdErr')
 
@@ -215,15 +215,17 @@ class Operation:
 
     def div(self, tokens):
         try:
-           
             if len(tokens) == 3 or len(tokens) == 6:
                 if tokens[-1] in self.variables:
                     tokens[-1] = self.variables[tokens[-1]]
                 if tokens[-2] in self.variables:
                     tokens[-2] = self.variables[tokens[-2]]
                 numChecker = self.numberChecker(tokens)
-                if numChecker[0]:
-                    return tokens[-1] / tokens[-2]
+                if numChecker:
+                    if isinstance(tokens[-1], int) and isinstance(tokens[-2], int):
+                        return math.floor(tokens[-2] / tokens[-1])
+                    else:
+                        return tokens[-2] / tokens[-1]             
             else:
                 self.error('cmdErr')
 
@@ -232,18 +234,17 @@ class Operation:
 
     def mod(self,tokens):
         try:
-            if len(tokens) == 3:
+            if len(tokens) == 3 or len(tokens) == 6:
                 if tokens[-1] in self.variables:
-                    tokens[-1] = str(self.variables[tokens[-1]])
+                    tokens[-1] = self.variables[tokens[-1]]
                 if tokens[-2] in self.variables:
-                    tokens[-2] = str(self.variables[tokens[-2]])
-                typeCompatible = self.numberChecker(tokens)
-                if typeCompatible[0]:
+                    tokens[-2] = self.variables[tokens[-2]]
+                numChecker= self.numberChecker(tokens)
+                if numChecker:
                     if isinstance(tokens[-1], int) and isinstance(tokens[-2], int):
-                        return tokens[-1] % tokens[-2]
+                        return tokens[-2] % tokens[-1]
                     else:
                         print("MOD operation only allows integer type")
-
         except IndexError:
             self.error('cmdErr')
     # Mutates exit variable to 1, to exit the loop
